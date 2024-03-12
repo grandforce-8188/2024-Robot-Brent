@@ -15,7 +15,7 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double stickDeadband = 0.1;
 
-    public static final double upperArmPosLimit = 86;
+    public static final double upperArmPosLimit = 89;
     public static final double lowerArmPosLimit = -7;
     public static final double maxManualArmSpeed = 1;
     public static final int armLeaderID = 32;
@@ -26,8 +26,9 @@ public final class Constants {
     public static final int shooterBottomID = 42;
     public static final int CANcoderID = 35;
     public static final int CANdleID = 50;
-    public static final double sourceArmPos = 60.637;
+    public static final double sourceArmPos = 62;
     public static final int currentLimit = 40;
+    public static final double intakeSpeed = 1;
 
     public static final class Swerve {
         public static final int pigeonID = 19;

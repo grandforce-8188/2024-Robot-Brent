@@ -5,9 +5,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,15 +58,13 @@ public class RobotContainer {
 
     public SendableChooser<Command> autoChooser;
 
-
-
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
+                () -> -driver.getRawAxis(translationAxis) * HeaidngCorrection(), 
+                () -> -driver.getRawAxis(strafeAxis) * HeaidngCorrection(), 
                 () -> -driver.getRawAxis(rotationAxis), 
                 () -> robotCentric.getAsBoolean()
             )
@@ -90,6 +90,20 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
+
+     private int HeaidngCorrection() {
+
+        var alliance = DriverStation.getAlliance();
+                            if (alliance.isPresent()) {
+                                if(alliance.get() == DriverStation.Alliance.Red){
+                                  return 1;
+                                }else{
+                                  return -1;
+                                }
+                            }
+                            return -1;
+
+        }
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
@@ -108,25 +122,26 @@ public class RobotContainer {
         manipulatorJoystick.button(7).whileTrue(new RunShooterRPM(mShooter, -80.0));
         manipulatorJoystick.button(1).whileTrue(new TriggerPull(mArm, mShooter, mIntake, mFeeder, mLimelight, s_Swerve));
 
-        manipulatorJoystick.button(2).whileTrue(new RunIntake(mIntake, -1.0));
-        manipulatorJoystick.button(5).whileTrue(new RunIntake(mIntake, 1.0));
+        manipulatorJoystick.button(2).whileTrue(new RunIntake(mIntake, -Constants.intakeSpeed));
+        manipulatorJoystick.button(6).whileTrue(new RunIntake(mIntake, Constants.intakeSpeed));
+        manipulatorJoystick.button(5).whileTrue(new RunIntake(mIntake, -Constants.intakeSpeed));
 
         manipulatorJoystick.button(3).whileTrue(new RunFeeder(mFeeder, -1.0));
         manipulatorJoystick.button(4).whileTrue(new RunFeeder(mFeeder, 1.0));
 
-        manipulatorJoystick.button(9).whileTrue(new PIDArm(mArm, Constants.sourceArmPos));
-        manipulatorJoystick.button(11).whileTrue(new PIDArm(mArm, Constants.lowerArmPosLimit));
-        manipulatorJoystick.button(10).whileTrue(new PIDArm(mArm, 15));
-        manipulatorJoystick.button(12).whileTrue(new PIDArm(mArm, Constants.upperArmPosLimit));
 
+        manipulatorJoystick.button(11).whileTrue(new PIDArm(mArm, Constants.sourceArmPos));
+        manipulatorJoystick.button(9).whileTrue(new PIDArm(mArm, Constants.lowerArmPosLimit));
+        manipulatorJoystick.button(10).whileTrue(new ShootPreset(mArm, mShooter, mIntake, mFeeder, mLimelight, 70));
+        manipulatorJoystick.button(12).whileTrue(new PIDArm(mArm, Constants.upperArmPosLimit));
 
     }
 
     public void configureAutoCommands(){
-        NamedCommands.registerCommand("spinIntake", new RunIntake(mIntake, -1.0).withTimeout(1.5));
+        NamedCommands.registerCommand("spinIntake", new RunIntake(mIntake, -Constants.intakeSpeed).withTimeout(1.5));
         NamedCommands.registerCommand("shootRPM", new ShootNoAlignSwerve(mArm, mShooter, mIntake, mFeeder, mLimelight, 80).withTimeout(1.5));
         NamedCommands.registerCommand("intakeDown", new PIDArm(mArm, Constants.lowerArmPosLimit).withTimeout(1));
-        NamedCommands.registerCommand("slowShoot", new ShootPreset(mArm, mShooter, mIntake, mFeeder, mLimelight, 50).withTimeout(1.3));
+        NamedCommands.registerCommand("slowShoot", new ShootPreset(mArm, mShooter, mIntake, mFeeder, mLimelight, 65).withTimeout(1.3));
         //NamedCommands.registerCommand("shoot", new Shoot(mShooter, mIntake, mFeeder).withTimeout(1));
         //NamedCommands.registerCommand("spinFeeder", new RunFeeder(mFeeder, -0.1).withTimeout(2));
         // NamedCommands.registerCommand("stopShooter", new RunShooterRPM(mShooter, 0));

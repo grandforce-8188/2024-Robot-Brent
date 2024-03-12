@@ -89,14 +89,14 @@ public class ShootPreset extends Command {
         // if (speakerDistance < 1.8){
         //   armAngle = 10;
         // }
-        mArm.PIDMoveArm(15);
+        mArm.PIDMoveArm(12);
         mShooter.RunShooterRPM(mSpeed);
 
         double armError = Math.abs(mArm.GetEncoderPosition() - 15);
         double shooterRPM = mShooter.getTopRPM();
 
         if (armError < 2 && shooterRPM > (mSpeed - 10)){
-          mIntake.RunIntake(-1.0);
+          mIntake.RunIntake(-Constants.intakeSpeed);
           mFeeder.RunFeeder(-1.0);
         }        
       }

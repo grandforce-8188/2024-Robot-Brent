@@ -29,7 +29,6 @@ public class TeleopSwerve extends Command {
     double previousRotation = 0;
     double commandedRotationVal = 0;
     double rotationVal = 0;
-    double headingCorrection = 1;
 
 
     double kP = 0.01; 
@@ -82,15 +81,10 @@ public class TeleopSwerve extends Command {
 
         previousRotation = commandedRotationVal;
 
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-            if(alliance.get() == DriverStation.Alliance.Red){
-                headingCorrection = -1;
-            }
-        }
+        
 
-        double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband) * headingCorrection;
-        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband) * headingCorrection;
+        double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
+        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
         commandedRotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         if (commandedRotationVal == 0 && previousRotation != 0){

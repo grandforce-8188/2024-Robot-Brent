@@ -96,12 +96,13 @@ public class TriggerPull extends Command {
 
         mArm.PIDMoveArm(armAngle);
         //mShooter.run(runShooter(shooterSpeed));
-        mShooter.RunShooterRPM(100);
+        mShooter.RunShooterRPM(90);
         double armError = Math.abs(mArm.GetEncoderPosition() - armAngle);
         double shooterRPM = mShooter.getTopRPM();
 
-        if (armError < 2 && speakerOffset < 0.5 && shooterRPM > 95){
-          mIntake.RunIntake(-1.0);
+        if (armError < 2 && speakerOffset < 1.5 && shooterRPM > 80){
+
+          mIntake.RunIntake(-Constants.intakeSpeed);
           mFeeder.RunFeeder(-1.0);
         }        
       }

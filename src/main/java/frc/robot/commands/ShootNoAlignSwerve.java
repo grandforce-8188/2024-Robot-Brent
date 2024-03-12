@@ -96,7 +96,7 @@ public class ShootNoAlignSwerve extends Command {
         double shooterRPM = mShooter.getTopRPM();
 
         if (armError < 2 && shooterRPM > (mSpeed - 10)){
-          mIntake.RunIntake(-1.0);
+          mIntake.RunIntake(-Constants.intakeSpeed);
           mFeeder.RunFeeder(-1.0);
         }        
       }

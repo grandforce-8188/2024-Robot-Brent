@@ -77,7 +77,7 @@ public class Shoot extends Command {
   @Override
   public void execute() {
         mShooter.RunShooterRPM(80);
-        mIntake.RunIntake(-1.0);
+        mIntake.RunIntake(-Constants.intakeSpeed);
         mFeeder.RunFeeder(-1.0);
       }
 
